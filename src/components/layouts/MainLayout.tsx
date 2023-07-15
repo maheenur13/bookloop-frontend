@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { Footer, Header } from '../common';
 
 type PropsType = {
@@ -9,7 +9,7 @@ export const MainLayout: FC<PropsType> = ({ children }) => {
   return (
     <div>
       <Header />
-      <main>{children}</main>
+      <main className="bg-gray-100">{children}</main>
       <Footer />
     </div>
   );

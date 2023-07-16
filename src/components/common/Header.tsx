@@ -1,3 +1,6 @@
+import { userLoggedOut } from '@/redux/features/auth/auth.slice';
+import { removeUser } from '@/redux/features/user/user.slice';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,6 +20,17 @@ const navItems = [
 ];
 
 export const Header: FC = () => {
+  const dispatch = useAppDispatch();
+  const {
+    user: { email },
+  } = useAppSelector(state => state.user);
+
+  const handleLogout = () => {
+    dispatch(removeUser());
+    dispatch(userLoggedOut());
+    localStorage.removeItem('auth');
+  };
+
   return (
     <nav className="w-full h-16 fixed top backdrop-blur-lg z-10">
       <div className="h-full w-full bg-white/60">
@@ -33,23 +47,39 @@ export const Header: FC = () => {
                 <Link to="/all-books">Books</Link>
               </li>
               <li className="p-3">WishList</li>
-              <li className="p-3">
-                <Link
-                  to="/login"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign in
-                </Link>
-              </li>
+              {email && (
+                <>
+                  <li className="p-3">
+                    <button
+                      onClick={handleLogout}
+                      className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      logout
+                    </button>
+                  </li>
+                </>
+              )}
+              {!email && (
+                <>
+                  <li className="p-3">
+                    <Link
+                      to="/login"
+                      className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Sign in
+                    </Link>
+                  </li>
 
-              <li>
-                <Link
-                  to="/sign-up"
-                  className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign Up
-                </Link>
-              </li>
+                  <li>
+                    <Link
+                      to="/sign-up"
+                      className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Sign Up
+                    </Link>
+                  </li>
+                </>
+              )}
               {/* <li className="ml-5">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="outline-none">

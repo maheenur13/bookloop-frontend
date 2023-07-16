@@ -33,8 +33,6 @@ export default function Signup() {
     }
   };
 
-  console.log(error);
-
   useEffect(() => {
     if (isSuccess) {
       navigate('/login');

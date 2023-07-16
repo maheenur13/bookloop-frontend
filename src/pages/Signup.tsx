@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useSignUpMutation } from '@/redux/features/auth/auth.api';
+import { useAppSelector } from '@/redux/hook';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, To, useLocation, useNavigate } from 'react-router-dom';
 
 type ISignUpUser = {
   email: string;
@@ -11,7 +12,11 @@ type ISignUpUser = {
 
 export default function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { accessToken } = useAppSelector(state => state.auth);
   const [signUp, { isSuccess, isError, error }] = useSignUpMutation();
+
+  const fromLocation: To = location.state?.from?.pathname || '/';
 
   const [userData, setUserData] = useState<ISignUpUser>({
     email: '',
@@ -35,6 +40,12 @@ export default function Signup() {
       navigate('/login');
     }
   }, [isSuccess, navigate]);
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate(fromLocation, { replace: true });
+    }
+  }, [accessToken, fromLocation, navigate]);
 
   return (
     <>
@@ -113,9 +124,9 @@ export default function Signup() {
               </button>
             </div>
             {isError && (
-              <p className="mt-10 text-center text-sm text-red-600">
-                {String(error)}
-              </p>
+              <div className="rounded-md bg-red-100 p-2">
+                <p className="text-red-600 text-center">{String(error)}</p>
+              </div>
             )}
             <p className="mt-10 text-center text-sm text-gray-500">
               Already have an account?

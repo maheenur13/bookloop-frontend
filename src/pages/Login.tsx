@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useLoginMutation } from '@/redux/features/auth/auth.api';
+import { useAppSelector } from '@/redux/hook';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, To, useLocation, useNavigate } from 'react-router-dom';
 
 type ILoginUser = {
   email: string;
@@ -9,12 +12,15 @@ type ILoginUser = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { accessToken } = useAppSelector(state => state.auth);
+  const fromLocation: To = location?.state?.from?.pathname || '/';
   const [userData, setUserData] = useState<ILoginUser>({
     email: '',
     password: '',
   });
 
-  const [login, { data }] = useLoginMutation();
+  const [login, { error, isError }] = useLoginMutation();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,10 +28,10 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (data?.data.accessToken) {
-      navigate('/');
+    if (accessToken) {
+      navigate(fromLocation, { replace: true });
     }
-  }, [data, navigate]);
+  }, [fromLocation, accessToken, navigate]);
 
   return (
     <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -98,6 +104,11 @@ export default function Login() {
               Sign in
             </button>
           </div>
+          {isError && (
+            <div className="rounded-md bg-red-100 p-2">
+              <p className="text-red-600 text-center">{String(error)}</p>
+            </div>
+          )}
           <p className="mt-10 text-center text-sm text-gray-500">
             Don't have an account?
             <Link

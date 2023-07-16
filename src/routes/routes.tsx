@@ -1,15 +1,20 @@
-import App from '@/App';
 import Books from '@/components/Books';
 import { MainLayout } from '@/components/layouts/MainLayout';
+import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
 import Signup from '@/pages/Signup';
 import { createBrowserRouter } from 'react-router-dom';
+import PrivateRoute from './PrivateRoute';
 
 const routes = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: (
+      <MainLayout>
+        <Home />
+      </MainLayout>
+    ),
   },
   {
     path: '/login',
@@ -23,7 +28,9 @@ const routes = createBrowserRouter([
     path: '/all-books',
     element: (
       <MainLayout>
-        <Books />
+        <PrivateRoute>
+          <Books />
+        </PrivateRoute>
       </MainLayout>
     ),
   },
